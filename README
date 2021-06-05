@@ -1,0 +1,11 @@
+Required software:
+- nvm
+- yarn
+- vue-cli
+
+
+
+nvm use
+yarn install
+yarn serve
+
