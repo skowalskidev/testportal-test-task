@@ -7,7 +7,7 @@ export interface GivenAnswerModel {
 export interface AnswerModel<GA extends GivenAnswerModel> {
     readonly: boolean;
     markCorrectness: boolean;
-    givenAnswer?: GA | null;
+    givenAnswer: GA;
 }
 
 export interface QuestionModel<A extends AnswerModel<GA>, GA extends GivenAnswerModel> {

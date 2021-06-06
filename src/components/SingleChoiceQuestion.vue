@@ -9,7 +9,9 @@
         <p>{{ body }}</p>
         <div v-for="answer in answers" :key="answer.id">
             <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" />
-            <label :for="answer.id">{{ answer.body }}</label>
+            <label :class="[{ selected: isForSelected(answer.id), right: isRight(answer.id), wrong: !isRight(answer.id) }]" :for="answer.id">{{
+                answer.body
+            }}</label>
             <br />
         </div>
         <button id="checkAnswerButton" @click="checkAnswer">Check answer</button>
@@ -17,12 +19,17 @@
 </template>
 
 <script lang="ts">
+import MockedQuestionBackend from '@/service/MockedQuestionBackend';
 import {
     Component, Prop, PropSync, Vue,
 } from 'vue-property-decorator';
 
 @Component
 export default class SingleChoiceQuestion extends Vue {
+    mockedQuestionBackend: MockedQuestionBackend = new MockedQuestionBackend();
+
+    checked = false;
+
     get position(): number {
         return this.$store.getters.position;
     }
@@ -47,15 +54,53 @@ export default class SingleChoiceQuestion extends Vue {
         return this.$store.getters.id;
     }
 
-    setSelected(value: string) {
-        // this.$emit('selected', value);
-        this.$store.dispatch('SET_SELECTED_ANSWER', value);
+    get selectedIndex(): number {
+        return this.$store.getters.selectedIndex;
+    }
+
+    getselectedID(index: number): string {
+        return this.$store.getters.selectedID(index);
+    }
+
+    isSelected(id: string): string {
+        return this.$store.getters.selected(id);
+    }
+
+    isRight(id: string): boolean {
+        return this.$store.getters.right(id);
+    }
+
+    isForSelected(id: string): boolean {
+        if (this.checked) {
+            return id === this.getselectedID(this.selectedIndex);
+        }
+        return false;
+    }
+
+    setSelected(id: string) {
+        this.$store.dispatch('SET_SELECTED_ANSWER', id);
     }
 
     checkAnswer() {
-        console.log('check answer');
+        this.$store.dispatch('MARK_ANSWER', this.mockedQuestionBackend);
+        this.checked = true;
+    }
+
+    created() {
+        this.$store.dispatch('FETCH_QUESTIONS', this.mockedQuestionBackend);
     }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+label {
+    &.selected {
+        &.right {
+            color: green;
+        }
+        &.wrong {
+            color: red;
+        }
+    }
+}
+</style>

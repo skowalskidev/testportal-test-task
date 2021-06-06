@@ -6,8 +6,14 @@ export default class MockedQuestionBackend {
             setTimeout(() => {
                 const mockedQuestionModel: ChoiceQuestionModel = {
                     id: '1',
-                    body: 'What is the capital city of Poland',
+                    body: 'What is the capital city of Poland?',
                     answer: {
+                        givenAnswer: {
+                            selectedAnswerIds: [],
+                            id: 'ga1',
+                            score: null,
+                            maxScore: null,
+                        },
                         readonly: false,
                         answers: [{
                             id: 'a1',
