@@ -13,7 +13,18 @@ import MockedQuestionBackend from '@/service/MockedQuestionBackend';
         SingleChoiceQuestion,
     },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+    mockedQuestionBackend: MockedQuestionBackend = new MockedQuestionBackend();
+
+    checkAnswer() {
+        // TODO: pass check ans req from child up here
+        this.$store.dispatch('CHECK_ANSWER');
+    }
+
+    created() {
+        this.$store.dispatch('FETCH_QUESTIONS', this.mockedQuestionBackend);
+    }
+}
 </script>
 
 <style lang="scss"></style>

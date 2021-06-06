@@ -18,4 +18,4 @@ export interface ChoiceGivenAnswerModel extends GivenAnswerModel {
     selectedAnswerIds: string[];
 }
 
-export type ChoiceQuestionModel = QuestionModel<ChoiceAnswerModel, ChoiceGivenAnswerModel>
+export type ChoiceQuestionModel = QuestionModel<ChoiceAnswerModel, ChoiceGivenAnswerModel>;

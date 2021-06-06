@@ -8,8 +8,8 @@
         </div>
         <p>{{ body }}</p>
         <div v-for="answer in answers" :key="answer.id">
-            <input type="radio" :id="'r' + answer.id" name="action" :value="answer.id" @click="clicked(answer.id)" />
-            <label :id="answer.id" :for="'r' + answer.id">{{ answer.body }}</label>
+            <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" />
+            <label :for="answer.id">{{ answer.body }}</label>
             <br />
         </div>
         <button id="checkAnswerButton" @click="checkAnswer">Check answer</button>
@@ -17,22 +17,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { ChoiceQuestionModel } from '@/model/ChoiceQuestionModel';
-import MockedQuestionBackend from '@/service/MockedQuestionBackend';
+import {
+    Component, Prop, PropSync, Vue,
+} from 'vue-property-decorator';
 
 @Component
 export default class SingleChoiceQuestion extends Vue {
-    mockedQuestionBackend: MockedQuestionBackend = new MockedQuestionBackend();
-
-    selectedAnswer: string;
-
-    clicked(value: string) {
-        this.selectedAnswer = value;
-    }
-
-    choiceQuestionModel: ChoiceQuestionModel;
-
     get position(): number {
         return this.$store.getters.position;
     }
@@ -57,50 +47,13 @@ export default class SingleChoiceQuestion extends Vue {
         return this.$store.getters.id;
     }
 
-    getQuestion() {
-        // get rid of this example code below and rewrite this component so it is using Vuex store
-        this.mockedQuestionBackend.getQuestionModel().then((value) => {
-            this.choiceQuestionModel = value;
-            this.$store.commit('setBody', value.body);
-            this.$store.commit('setAnswers', value.answer.answers);
-            this.$store.commit('setMaxScore', value.maxScore);
-            this.$store.commit('setQuestionsCount', value.questionsCount);
-            this.$store.commit('setPosition', value.position);
-        });
+    setSelected(value: string) {
+        // this.$emit('selected', value);
+        this.$store.dispatch('SET_SELECTED_ANSWER', value);
     }
 
     checkAnswer() {
-        this.mockedQuestionBackend
-            .markQuestionAnswer({
-                selectedAnswerIds: [this.selectedAnswer],
-                id: this.$store.state.id,
-                score: 0,
-                maxScore: this.$store.state.maxScore,
-            })
-            .then((value) => {
-                const items = value.answer.answers;
-                for (let i = 0; i < items.length; i += 1) {
-                    if (this.selectedAnswer === items[i].id) {
-                        if (items[i].correct) {
-                            if (document.getElementById(this.selectedAnswer) !== null) {
-                                document.getElementById(this.selectedAnswer)!.style.color = 'green';
-                            }
-                        } else if (document.getElementById(this.selectedAnswer) !== null) {
-                            document.getElementById(this.selectedAnswer)!.style.color = 'red';
-                        }
-                    }
-                    if (document.getElementById(`r${items[i].id}`) !== null) {
-                        (document.getElementById(`r${items[i].id}`) as any)!.disabled = true;
-                    }
-                }
-                if (document.getElementById('checkAnswerButton') !== null) {
-                    (document.getElementById('checkAnswerButton') as any)!.disabled = true;
-                }
-            });
-    }
-
-    created() {
-        this.getQuestion();
+        console.log('check answer');
     }
 }
 </script>
