@@ -2,6 +2,8 @@ import { AnswerOptionModel, ChoiceQuestionModel } from '@/model/ChoiceQuestionMo
 import MockedQuestionBackend from '@/service/MockedQuestionBackend';
 import { StoreOptions } from 'vuex';
 
+const mockedQuestionBackend = new MockedQuestionBackend();
+
 const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
     state: () => ({
         id: '',
@@ -12,6 +14,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
                 id: '',
                 score: null,
                 maxScore: null,
+                loading: false,
             },
             markCorrectness: false,
             answers: [],
@@ -20,6 +23,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         maxScore: null,
         questionsCount: 0,
         position: 0,
+        loading: true,
     }),
     getters: {
         id: (state) => state.id,
@@ -31,6 +35,8 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         position: (state) => state.position,
         markCorrectness: (state) => state.answer.answers[0].markCorrectness,
         right: (state) => (id: string) => state.answer.answers[state.answer.answers.findIndex((obj) => obj.id === id)].correct,
+        givenAnswerLoading: (state) => state.answer.givenAnswer.loading,
+        questionLoading: (state) => state.loading,
     },
     mutations: {
         TOGGLE_SELECTED: (state: ChoiceQuestionModel, payload: { index: number; selected: boolean }) => {
@@ -52,23 +58,30 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         SET_QUESTION: (state: ChoiceQuestionModel, payload: ChoiceQuestionModel) => {
             Object.assign(state, payload);
         },
+
+        SET_LOADING: (state: ChoiceQuestionModel, loading: boolean) => {
+            state.answer.givenAnswer.loading = loading;
+        },
     },
     actions: {
-        FETCH_QUESTIONS: async (context, mockedQuestionBackend: MockedQuestionBackend) => {
+        FETCH_QUESTIONS: async (context) => {
             mockedQuestionBackend.getQuestionModel().then((questionModel) => {
                 context.commit('SET_QUESTION', questionModel);
             });
         },
-        MARK_ANSWER: async (context, mockedQuestionBackend: MockedQuestionBackend) => {
+        MARK_ANSWER: async (context) => {
+            context.commit('SET_LOADING', true);
             mockedQuestionBackend
                 .markQuestionAnswer({
                     selectedAnswerIds: context.getters.selectedAnswerIds,
                     id: context.getters.id,
                     score: 0,
                     maxScore: context.getters.maxScore,
+                    loading: context.getters.givenAnswerLoading,
                 })
                 .then((markedMockedQuestionModel) => {
                     context.commit('SET_QUESTION', markedMockedQuestionModel);
+                    context.commit('SET_LOADING', false);
                 });
         },
         SET_SELECTED_ANSWER: (context, answerID: string) => {

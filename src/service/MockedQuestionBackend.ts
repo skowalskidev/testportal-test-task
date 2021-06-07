@@ -13,29 +13,35 @@ export default class MockedQuestionBackend {
                             id: 'ga1',
                             score: null,
                             maxScore: null,
+                            loading: false,
                         },
                         readonly: false,
-                        answers: [{
-                            id: 'a1',
-                            body: 'Paris',
-                            selected: false,
-                        }, {
-                            id: 'a2',
-                            body: 'Warsaw',
-                            selected: false,
-                        }, {
-                            id: 'a3',
-                            body: 'London',
-                            selected: false,
-                        }],
+                        answers: [
+                            {
+                                id: 'a1',
+                                body: 'Paris',
+                                selected: false,
+                            },
+                            {
+                                id: 'a2',
+                                body: 'Warsaw',
+                                selected: false,
+                            },
+                            {
+                                id: 'a3',
+                                body: 'London',
+                                selected: false,
+                            },
+                        ],
                         markCorrectness: false,
                     },
                     maxScore: 1,
                     position: 1,
                     questionsCount: 5,
+                    loading: false,
                 };
                 resolve(mockedQuestionModel);
-            }, 200);
+            }, 2000);
         });
     }
 
@@ -44,40 +50,45 @@ export default class MockedQuestionBackend {
             setTimeout(() => {
                 const markedMockedQuestionModel: ChoiceQuestionModel = {
                     id: '1',
-                    body: 'What is the capital city of Poland',
+                    body: 'What is the capital city of Poland?',
                     answer: {
                         readonly: true,
                         givenAnswer,
-                        answers: [{
-                            id: 'a1',
-                            body: 'Paris',
-                            selected: givenAnswer.selectedAnswerIds.indexOf('a1') >= 0,
-                            markCorrectness: true,
-                            correct: false,
-                            readonly: true,
-                        }, {
-                            id: 'a2',
-                            body: 'Warsaw',
-                            selected: givenAnswer.selectedAnswerIds.indexOf('a2') >= 0,
-                            markCorrectness: true,
-                            correct: true,
-                            readonly: true,
-                        }, {
-                            id: 'a3',
-                            body: 'London',
-                            selected: givenAnswer.selectedAnswerIds.indexOf('a3') >= 0,
-                            markCorrectness: true,
-                            correct: false,
-                            readonly: true,
-                        }],
+                        answers: [
+                            {
+                                id: 'a1',
+                                body: 'Paris',
+                                selected: givenAnswer.selectedAnswerIds.indexOf('a1') >= 0,
+                                markCorrectness: true,
+                                correct: false,
+                                readonly: true,
+                            },
+                            {
+                                id: 'a2',
+                                body: 'Warsaw',
+                                selected: givenAnswer.selectedAnswerIds.indexOf('a2') >= 0,
+                                markCorrectness: true,
+                                correct: true,
+                                readonly: true,
+                            },
+                            {
+                                id: 'a3',
+                                body: 'London',
+                                selected: givenAnswer.selectedAnswerIds.indexOf('a3') >= 0,
+                                markCorrectness: true,
+                                correct: false,
+                                readonly: true,
+                            },
+                        ],
                         markCorrectness: false,
                     },
                     maxScore: 1,
                     position: 1,
                     questionsCount: 5,
+                    loading: false,
                 };
                 resolve(markedMockedQuestionModel);
-            }, 300);
+            }, 2000);
         });
     }
 }

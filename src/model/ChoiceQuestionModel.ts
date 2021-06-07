@@ -16,6 +16,7 @@ export interface ChoiceAnswerModel extends AnswerModel<ChoiceGivenAnswerModel> {
 
 export interface ChoiceGivenAnswerModel extends GivenAnswerModel {
     selectedAnswerIds: string[];
+    loading: boolean,
 }
 
 export type ChoiceQuestionModel = QuestionModel<ChoiceAnswerModel, ChoiceGivenAnswerModel>;
