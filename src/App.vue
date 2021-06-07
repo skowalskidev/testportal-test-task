@@ -5,8 +5,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import SingleChoiceQuestion from '@/components/SingleChoiceQuestion.vue';
-import { ChoiceQuestionModel } from '@/model/ChoiceQuestionModel';
-import MockedQuestionBackend from '@/service/MockedQuestionBackend';
 
 @Component({
     components: {

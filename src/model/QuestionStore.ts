@@ -1,7 +1,6 @@
-import { AnswerOptionModel, ChoiceAnswerModel, ChoiceQuestionModel } from '@/model/ChoiceQuestionModel';
+import { AnswerOptionModel, ChoiceQuestionModel } from '@/model/ChoiceQuestionModel';
 import MockedQuestionBackend from '@/service/MockedQuestionBackend';
-import { Store, StoreOptions } from 'vuex';
-import { QuestionModel } from './QuestionModel';
+import { StoreOptions } from 'vuex';
 
 const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
     state: () => ({
@@ -30,19 +29,10 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         maxScore: (state) => state.maxScore,
         questionsCount: (state) => state.questionsCount,
         position: (state) => state.position,
-        selectedIndex: (state) => state.answer.answers.findIndex((obj) => obj.selected === true),
-        selectedID: (state) => (index: number) => state.answer.answers[index].id,
-        selected: (state) => (id: string) => state.answer.answers[state.answer.answers.findIndex((obj) => obj.id === id)].selected,
+        markCorrectness: (state) => state.answer.answers[0].markCorrectness,
         right: (state) => (id: string) => state.answer.answers[state.answer.answers.findIndex((obj) => obj.id === id)].correct,
     },
     mutations: {
-        // setID(state, id) {
-        //     state.id = id;
-        //     console.log('Store ID has been set');
-        // },
-        // setBody(state, body) {
-        //     state.body = body;
-        // },
         TOGGLE_SELECTED: (state: ChoiceQuestionModel, payload: { index: number; selected: boolean }) => {
             state.answer.answers[payload.index].selected = payload.selected;
             // Find the index of the element in the array (-1 if it doesn't exist)
@@ -58,15 +48,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
                 state.answer.givenAnswer.selectedAnswerIds.splice(index, 1);
             }
         },
-        // setMaxScore(state, maxScore) {
-        //     state.maxScore = maxScore;
-        // },
-        // setQuestionsCount(state, questionsCount) {
-        //     state.questionsCount = questionsCount;
-        // },
-        // setPosition(state, position) {
-        //     state.position = position;
-        // },
+
         SET_QUESTION: (state: ChoiceQuestionModel, payload: ChoiceQuestionModel) => {
             Object.assign(state, payload);
         },
@@ -77,7 +59,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
                 context.commit('SET_QUESTION', questionModel);
             });
         },
-        MARK_ANSWER: (context, mockedQuestionBackend: MockedQuestionBackend) => {
+        MARK_ANSWER: async (context, mockedQuestionBackend: MockedQuestionBackend) => {
             mockedQuestionBackend
                 .markQuestionAnswer({
                     selectedAnswerIds: context.getters.selectedAnswerIds,

@@ -1,34 +1,34 @@
 <template>
-    <section>
-        <div style="width: 100%; overflow: hidden;">
-            <h3 style="width: 300px; float: left;">Question {{ position }}/{{ questionsCount }}</h3>
-            <div style="margin-left: 320px; vertical-align: bottom;">
-                <i>(max. score {{ maxScore }})</i>
+    <div class="flex-container">
+        <aside class="aside aside-1"></aside>
+        <aside class="aside aside-2"></aside>
+        <div class="flex-child">
+            <h3>Question {{ position }}/{{ questionsCount }}</h3>
+            <div>
+                <p>{{ body }}</p>
+                <div v-for="answer in answers" :key="answer.id">
+                    <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" :disabled="disabled" />
+                    <label :class="[{ right: isRight(answer.id), markCorrectness: markCorrectness }]" :for="answer.id">{{ answer.body }}</label>
+                    <br />
+                </div>
+                <button id="checkAnswerButton" @click="checkAnswer" :disabled="disabled">Check answer</button>
             </div>
         </div>
-        <p>{{ body }}</p>
-        <div v-for="answer in answers" :key="answer.id">
-            <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" />
-            <label :class="[{ selected: isForSelected(answer.id), right: isRight(answer.id), wrong: !isRight(answer.id) }]" :for="answer.id">{{
-                answer.body
-            }}</label>
-            <br />
+        <div class="flex-child flex-child2">
+            <i>(max. score {{ maxScore }})</i>
         </div>
-        <button id="checkAnswerButton" @click="checkAnswer">Check answer</button>
-    </section>
+    </div>
 </template>
 
 <script lang="ts">
 import MockedQuestionBackend from '@/service/MockedQuestionBackend';
-import {
-    Component, Prop, PropSync, Vue,
-} from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class SingleChoiceQuestion extends Vue {
     mockedQuestionBackend: MockedQuestionBackend = new MockedQuestionBackend();
 
-    checked = false;
+    disabled = false;
 
     get position(): number {
         return this.$store.getters.position;
@@ -50,31 +50,12 @@ export default class SingleChoiceQuestion extends Vue {
         return this.$store.getters.answers;
     }
 
-    get id(): number {
-        return this.$store.getters.id;
-    }
-
-    get selectedIndex(): number {
-        return this.$store.getters.selectedIndex;
-    }
-
-    getselectedID(index: number): string {
-        return this.$store.getters.selectedID(index);
-    }
-
-    isSelected(id: string): string {
-        return this.$store.getters.selected(id);
+    get markCorrectness(): boolean {
+        return this.$store.getters.markCorrectness;
     }
 
     isRight(id: string): boolean {
         return this.$store.getters.right(id);
-    }
-
-    isForSelected(id: string): boolean {
-        if (this.checked) {
-            return id === this.getselectedID(this.selectedIndex);
-        }
-        return false;
     }
 
     setSelected(id: string) {
@@ -83,7 +64,7 @@ export default class SingleChoiceQuestion extends Vue {
 
     checkAnswer() {
         this.$store.dispatch('MARK_ANSWER', this.mockedQuestionBackend);
-        this.checked = true;
+        this.disabled = true;
     }
 
     created() {
@@ -93,14 +74,52 @@ export default class SingleChoiceQuestion extends Vue {
 </script>
 
 <style lang="scss">
-label {
-    &.selected {
-        &.right {
-            color: green;
-        }
-        &.wrong {
-            color: red;
-        }
+input[type='radio']:checked + label.markCorrectness {
+    &.right {
+        color: green;
+    }
+    & {
+        color: red;
+    }
+}
+
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    text-align: center;
+}
+
+.flex-container > * {
+    padding: 10px;
+    flex: 1 100%;
+}
+
+.flex-child {
+    text-align: left;
+}
+
+.flex-child2 {
+    text-align: right;
+}
+
+@media all and (min-width: 600px) {
+    .aside {
+        flex: 1 0 0;
+    }
+}
+
+@media all and (min-width: 800px) {
+    .flex-child {
+        flex: 3 0px;
+    }
+    .aside-1 {
+        order: 1;
+    }
+    .flex-child {
+        order: 2;
+    }
+    .aside-2 {
+        order: 3;
     }
 }
 </style>
