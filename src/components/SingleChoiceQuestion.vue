@@ -1,21 +1,28 @@
 <template>
-    <div class="flex-container">
+    <div class="flex-container-column">
         <aside class="aside aside-1"></aside>
         <aside class="aside aside-2"></aside>
-        <div class="flex-child">
-            <h3>Question {{ position }}/{{ questionsCount }}</h3>
-            <div>
-                <p>{{ body }}</p>
-                <div v-for="answer in answers" :key="answer.id">
-                    <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" :disabled="disabled" />
-                    <label :class="[{ right: isRight(answer.id), markCorrectness: markCorrectness }]" :for="answer.id">{{ answer.body }}</label>
-                    <br />
+        <div class="flex-container-column-child">
+            <div class="flex-container-row">
+                <div class="flex-container-row-child">
+                    <h3>Question {{ position }}/{{ questionsCount }}</h3>
                 </div>
-                <button id="checkAnswerButton" @click="checkAnswer" :disabled="disabled">Check answer</button>
+                <div class="flex-container-row-child">
+                    <i>(max. score {{ maxScore }})</i>
+                </div>
             </div>
         </div>
-        <div class="flex-child flex-child2">
-            <i>(max. score {{ maxScore }})</i>
+        <div class="flex-container-column-child">
+            {{ body }}
+        </div>
+        <div class="flex-container-column-child">
+            <div class="answers" v-for="answer in answers" :key="answer.id">
+                <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" :disabled="disabled" />
+                <label :class="[{ right: isRight(answer.id), markCorrectness: markCorrectness }]" :for="answer.id">{{ answer.body }}</label>
+            </div>
+        </div>
+        <div class="flex-container-column-child">
+            <button id="checkAnswerButton" @click="checkAnswer" :disabled="disabled">Check answer</button>
         </div>
     </div>
 </template>
@@ -83,43 +90,34 @@ input[type='radio']:checked + label.markCorrectness {
     }
 }
 
-.flex-container {
+.flex-container-column {
     display: flex;
-    flex-flow: row wrap;
-    text-align: center;
+    flex-direction: column;
+    align-items: center;
 }
 
-.flex-container > * {
-    padding: 10px;
-    flex: 1 100%;
+.flex-container-column-child {
+    width: 40%;
+    padding: 5px;
 }
 
-.flex-child {
-    text-align: left;
-}
-
-.flex-child2 {
-    text-align: right;
-}
-
-@media all and (min-width: 600px) {
-    .aside {
-        flex: 1 0 0;
+@media only screen and (max-width: 600px) {
+    .flex-container-column-child {
+        width: 100%;
     }
 }
 
-@media all and (min-width: 800px) {
-    .flex-child {
-        flex: 3 0px;
-    }
-    .aside-1 {
-        order: 1;
-    }
-    .flex-child {
-        order: 2;
-    }
-    .aside-2 {
-        order: 3;
-    }
+.flex-container-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-container-row-child {
+}
+
+.answers {
+    padding: 5px;
 }
 </style>
