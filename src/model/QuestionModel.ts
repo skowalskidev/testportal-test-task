@@ -17,5 +17,6 @@ export interface QuestionModel<A extends AnswerModel<GA>, GA extends GivenAnswer
     questionsCount: number;
     answer: A;
     maxScore: number | null;
-    loading: false,
+    loading: boolean;
+    locked: boolean;
 }

@@ -45,7 +45,7 @@
             </div>
             <div class="flex-container-column-child">
                 <div class="answers" v-for="answer in answers" :key="answer.id">
-                    <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" :disabled="disabled" />
+                    <input type="radio" @click="setSelected(answer.id)" :id="answer.id" name="action" :value="answer.id" :disabled="locked" />
                     <label :class="[{ right: isRight(answer.id), markCorrectness: markCorrectness }]" :for="answer.id">{{ answer.body }}</label>
                     <div v-if="givenAnswerLoading" class="lds-ring">
                         <div></div>
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="flex-container-column-child">
-                <button id="checkAnswerButton" @click="checkAnswer" :disabled="disabled">Check answer</button>
+                <button id="checkAnswerButton" @click="checkAnswer" :disabled="locked">Check answer</button>
             </div>
         </div>
     </div>
@@ -67,8 +67,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class SingleChoiceQuestion extends Vue {
-    disabled = false;
-
     get position(): number {
         return this.$store.getters.position;
     }
@@ -101,6 +99,10 @@ export default class SingleChoiceQuestion extends Vue {
         return this.$store.getters.questionLoading;
     }
 
+    get locked(): boolean {
+        return this.$store.getters.locked;
+    }
+
     isRight(id: string): boolean {
         return this.$store.getters.right(id);
     }
@@ -111,7 +113,6 @@ export default class SingleChoiceQuestion extends Vue {
 
     checkAnswer() {
         this.$store.dispatch('MARK_ANSWER');
-        this.disabled = true;
     }
 
     created() {

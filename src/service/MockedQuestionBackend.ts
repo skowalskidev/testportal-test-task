@@ -39,6 +39,7 @@ export default class MockedQuestionBackend {
                     position: 1,
                     questionsCount: 5,
                     loading: false,
+                    locked: false,
                 };
                 resolve(mockedQuestionModel);
             }, 2000);
@@ -86,6 +87,7 @@ export default class MockedQuestionBackend {
                     position: 1,
                     questionsCount: 5,
                     loading: false,
+                    locked: true,
                 };
                 resolve(markedMockedQuestionModel);
             }, 2000);

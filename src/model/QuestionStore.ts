@@ -5,7 +5,7 @@ import { StoreOptions } from 'vuex';
 const mockedQuestionBackend = new MockedQuestionBackend();
 
 const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
-    state: () => ({
+    state: ({
         id: '',
         body: '',
         answer: {
@@ -24,6 +24,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         questionsCount: 0,
         position: 0,
         loading: true,
+        locked: false,
     }),
     getters: {
         id: (state) => state.id,
@@ -37,6 +38,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         right: (state) => (id: string) => state.answer.answers[state.answer.answers.findIndex((obj) => obj.id === id)].correct,
         givenAnswerLoading: (state) => state.answer.givenAnswer.loading,
         questionLoading: (state) => state.loading,
+        locked: (statue) => statue.locked,
     },
     mutations: {
         TOGGLE_SELECTED: (state: ChoiceQuestionModel, payload: { index: number; selected: boolean }) => {
@@ -62,6 +64,10 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         SET_LOADING: (state: ChoiceQuestionModel, loading: boolean) => {
             state.answer.givenAnswer.loading = loading;
         },
+
+        SET_LOCKED: (state: ChoiceQuestionModel, locked: boolean) => {
+            state.locked = locked;
+        },
     },
     actions: {
         FETCH_QUESTIONS: async (context) => {
@@ -71,6 +77,7 @@ const QuestionStoreDefinition: StoreOptions<ChoiceQuestionModel> = {
         },
         MARK_ANSWER: async (context) => {
             context.commit('SET_LOADING', true);
+            context.commit('SET_LOCKED', true);
             mockedQuestionBackend
                 .markQuestionAnswer({
                     selectedAnswerIds: context.getters.selectedAnswerIds,
