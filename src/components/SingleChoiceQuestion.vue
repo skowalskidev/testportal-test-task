@@ -29,7 +29,7 @@
                 <span class="skeleton-box" style="width:100px;height:20px;"></span>
             </div>
         </div>
-        <div v-if="!questionLoading" class="flex-container-column">
+        <div v-else class="flex-container-column">
             <div class="flex-container-column-child">
                 <div class="flex-container-row">
                     <div class="flex-container-row-child">
